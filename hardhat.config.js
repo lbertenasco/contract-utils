@@ -7,24 +7,26 @@ const config = require('./.config.json');
 const mainnetAccounts = [
   config.accounts.mainnet.privateKey
 ];
-/**
- * @type import('hardhat/config').HardhatUserConfig
- */
+
+const networks = {};
+if (process.env.FORK)
+  networks.hardhat = {
+    forking: {
+      url: `https://eth-mainnet.alchemyapi.io/v2/${config.alchemy.mainnet.apiKey}`
+    }
+  }
+
+if (process.env.MAINNET)
+  networks.mainnet = {
+    url: `https://eth-mainnet.alchemyapi.io/v2/${config.alchemy.mainnet.apiKey}`,
+    accounts: mainnetAccounts,
+    gasMultiplier: 1.1,
+    gasPrice: 30000000000, // 30 gwei
+  }
+
 module.exports = {
   defaultNetwork: 'hardhat',
-  networks: {
-    hardhat: {
-      forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${config.alchemy.mainnet.apiKey}`,
-      }
-    },
-    mainnet: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${config.alchemy.mainnet.apiKey}`,
-      accounts: mainnetAccounts,
-      gasMultiplier: 1.1,
-      gasPrice: 30000000000, // 30 gwei
-    }
-  },
+  networks,
   solidity: {
     compilers: [
       {
